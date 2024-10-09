@@ -136,10 +136,8 @@ class BaseSoC(SoCCore):
                 sys_clk_freq = sys_clk_freq)
         
         if with_dram:
-            print("Need to add dram hardware")
             ddr3 = Ddr3(platform)
-            dram = Instance(ddr3.ddr())
-            ddr_phy = DecaDdr3Phy(ddr3=dram, 
+            ddr_phy = DecaDdr3Phy(ddr3=ddr3, 
                     pads = platform.request("ddram"), 
                     sys_clk_freq = sys_clk_freq)
             self.add_sdram("ddr3",
