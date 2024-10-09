@@ -139,7 +139,9 @@ class BaseSoC(SoCCore):
             ddr3 = Ddr3(platform)
             ddr3_pads = platform.request("ddram")
             self.comb += ddr3_pads.cs_n.eq(1)
-            ddr_phy = DecaDdr3Phy(ddr3=ddr3, 
+            ddr_phy = DecaDdr3Phy(
+                    self,
+                    ddr3=ddr3, 
                     pads = ddr3_pads, 
                     sys_clk_freq = sys_clk_freq)
             self.add_sdram("ddr3",
