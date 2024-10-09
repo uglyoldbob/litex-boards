@@ -283,6 +283,13 @@ _io = [
         IOStandard("3.3-V LVTTL")
     ),
 
+    ("spiflash4x", 0,
+        Subsignal("cs_n", Pins("R10")),
+        Subsignal("clk",  Pins("R12")),
+        Subsignal("dq",   Pins("P12 V4 V5 P10")),
+        IOStandard("3.3-V LVTTL")
+    ),
+
     # GPIO Serial.
     ("gpio_serial", 0,
         Subsignal("tx", Pins("P8:3")),

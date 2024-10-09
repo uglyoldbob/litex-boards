@@ -21,6 +21,12 @@ from litex.soc.integration.builder import *
 from litex.soc.cores.video import VideoDVIPHY
 from litex.soc.cores.led import LedChaser
 
+from litedram.modules import AS4C128M16
+from litedram.phy import DecaDdr3Phy
+
+from BrianHG_DDR3 import Ddr3
+
+
 from liteeth.phy.mii import LiteEthPHYMII
 
 # CRG ----------------------------------------------------------------------------------------------
@@ -62,6 +68,7 @@ class BaseSoC(SoCCore):
         with_spi_sdcard     = False,
         with_ethernet       = False,
         with_etherbone      = False,
+        with_dram           = False,
         eth_ip              = "192.168.1.50",
         eth_dynamic_ip      = False,
         **kwargs):
@@ -127,6 +134,19 @@ class BaseSoC(SoCCore):
             self.leds = LedChaser(
                 pads         = platform.request_all("user_led"),
                 sys_clk_freq = sys_clk_freq)
+        
+        if with_dram:
+            print("Need to add dram hardware")
+            ddr3 = Ddr3(platform)
+            dram = Instance(ddr3.ddr())
+            ddr_phy = DecaDdr3Phy(ddr3=dram, 
+                    pads = platform.request("ddram"), 
+                    sys_clk_freq = sys_clk_freq)
+            self.add_sdram("ddr3",
+                    phy = ddr_phy,
+                    module = AS4C128M16(sys_clk_freq, "1:2"),
+                    )
+
 
 # Build --------------------------------------------------------------------------------------------
 
@@ -141,6 +161,7 @@ def main():
     parser.add_target_argument("--eth-dynamic-ip",      action="store_true",    help="Enable dynamic Ethernet IP addresses setting.")
     parser.add_target_argument("--with-video-terminal", action="store_true",    help="Enable Video Terminal (VGA).")
     parser.add_target_argument("--with-spi-sdcard",     action="store_true",    help="Enable SPI SD card controller.")
+    parser.add_target_argument("--with-dram",           action="store_true",    help="Enable DRAM support.")
     args = parser.parse_args()
 
     soc = BaseSoC(
@@ -151,6 +172,7 @@ def main():
         eth_dynamic_ip      = args.eth_dynamic_ip,
         with_video_terminal = args.with_video_terminal,
         with_spi_sdcard     = args.with_spi_sdcard,
+        with_dram           = args.with_dram,
         **parser.soc_argdict
     )
     builder = Builder(soc, **parser.builder_argdict)
