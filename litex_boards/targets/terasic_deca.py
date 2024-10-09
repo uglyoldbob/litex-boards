@@ -85,7 +85,7 @@ class BaseSoC(SoCCore):
                 kwargs["uart_name"] = "crossover"
             else:
                 kwargs["uart_name"] = "jtag_uart"
-        if kwargs["with_uartbone"]:
+        if kwargs.get("with_uartbone"):
             kwargs["uart_name"] = "crossover"
         SoCCore.__init__(self, platform, sys_clk_freq, ident="LiteX SoC on Terasic DECA", **kwargs)
 
