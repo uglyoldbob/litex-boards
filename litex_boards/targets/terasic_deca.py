@@ -138,6 +138,8 @@ class BaseSoC(SoCCore):
         if with_dram:
             ddr3 = Ddr3(platform)
             ddr3_pads = platform.request("ddram")
+            ddr3_reset = Signal()
+            ddr3_reset.eq(0)
             ddr_clk = Signal()
             ddr_clk_rdq = Signal()
             ddr_clk_wdq = Signal()
@@ -149,7 +151,7 @@ class BaseSoC(SoCCore):
             ddr_pll_phase_updn = Signal()
             ddr_pll_tune_phase_done = Signal()
             dram_pll = Instance("BrianHG_DDR3_PLL",
-                i_RST_IN = 0,
+                i_RST_IN = ddr3_reset,
                 o_DDR3_CLK = ddr_clk,
                 o_DDR3_CLK_WDQ = ddr_clk_wdq,
                 o_DDR3_CLK_RDQ = ddr_clk_rdq,
@@ -159,7 +161,7 @@ class BaseSoC(SoCCore):
                 o_PLL_LOCKED = ddr_pll_locked,
                 i_phase_step = ddr_pll_phase_step,
                 i_phase_updn = ddr_pll_phase_updn,
-                i_phase_sclk = ddr_pll_phase_sclk,
+                i_phase_sclk = ddr_clk_25,
                 o_phase_done = ddr_pll_tune_phase_done,
                 )
             self.dram = Instance(ddr3.ddr(),
@@ -178,7 +180,7 @@ class BaseSoC(SoCCore):
                 io_DDR3_DQ = ddr3_pads.dq,
                 io_DDR3_DQS_p = ddr3_pads.dqs_p,
                 io_DDR3_DQS_n = ddr3_pads.dqs_n,
-                i_RST_IN = 0,
+                i_RST_IN = ddr3_reset,
                 i_DDR_CLK = ddr_clk,
                 i_DDR_CLK_RDQ = ddr_clk_rdq,
                 i_DDR_CLK_WDQ = ddr_clk_wdq,
