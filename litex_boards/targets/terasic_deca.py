@@ -138,17 +138,24 @@ class BaseSoC(SoCCore):
         if with_dram:
             ddr3 = Ddr3(platform)
             ddr3_pads = platform.request("ddram")
-            self.comb += ddr3_pads.cs_n.eq(1)
-            ddr_phy = DecaDdr3Phy(
-                    self,
-                    ddr3=ddr3, 
-                    pads = ddr3_pads, 
-                    sys_clk_freq = sys_clk_freq)
-            self.add_sdram("ddr3",
-                    phy = ddr_phy,
-                    module = AS4C128M16(sys_clk_freq, "1:2"),
-                    )
-
+            self.dram = Instance(ddr3.ddr(),
+                o_DDR3_RESET_n = ddr3_pads.reset_n,
+                o_DDR3_CK_p = ddr3_pads.clk_p,
+                o_DDR3_CK_n = ddr3_pads.clk_n,
+                o_DDR3_CKE = ddr3_pads.cke,
+                o_DDR3_CS_n = ddr3_pads.cs_n,
+                o_DDR3_RAS_n = ddr3_pads.ras_n,
+                o_DDR3_CAS_n = ddr3_pads.cas_n,
+                o_DDR3_WE_n = ddr3_pads.we_n,
+                o_DDR3_ODT = ddr3_pads.odt,
+                o_DDR3_A = ddr3_pads.a,
+                o_DDR3_BA = ddr3_pads.ba,
+                io_DDR3_DM = ddr3_pads.dm,
+                io_DDR3_DQ = ddr3_pads.dq,
+                io_DDR3_DQS_p = ddr3_pads.dqs_p,
+                io_DDR3_DQS_n = ddr3_pads.dqs_n,
+            )
+            self.specials += [self.dram]
 
 # Build --------------------------------------------------------------------------------------------
 
