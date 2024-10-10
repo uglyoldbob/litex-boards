@@ -150,6 +150,20 @@ class BaseSoC(SoCCore):
             ddr_pll_phase_step = Signal()
             ddr_pll_phase_updn = Signal()
             ddr_pll_tune_phase_done = Signal()
+            ddr_seq_cmd_ena_t = Signal()
+            ddr_seq_write_ena = Signal()
+            ddr_seq_addr = Signal(30)
+            ddr_seq_wdata = Signal(128)
+            ddr_seq_rdata = Signal(128)
+            ddr_seq_wmask = Signal(16)
+            ddr_seq_rdata_vect_in = Signal(5)
+            ddr_seq_rdata_vect_out = Signal(5)
+            ddr_seq_refresh_hold = Signal()
+            ddr_seq_refresh_hold.eq(0)
+            ddr_seq_busy_t = Signal()
+            ddr_seq_rdata_rdy_t = Signal()
+            ddr_seq_refresh_queue = Signal(5)
+            ddr_pll_rdcal_data = Signal(8)
             dram_pll = Instance("BrianHG_DDR3_PLL",
                 i_RST_IN = ddr3_reset,
                 o_DDR3_CLK = ddr_clk,
@@ -186,7 +200,7 @@ class BaseSoC(SoCCore):
                 i_DDR_CLK_WDQ = ddr_clk_wdq,
                 i_DDR_CLK_50 = ddr_clk_50,
                 i_DDR_CLK_25 = ddr_clk_25,
-                i_CLK_IN = main_clock,
+                i_CLK_IN = ClockSignal("sys"),
                 i_CMD_CLK = ddr_cmd_clk,
                 i_SEQ_CMD_ENA_t = ddr_seq_cmd_ena_t,
                 i_SEQ_WRITE_ENA = ddr_seq_write_ena,
