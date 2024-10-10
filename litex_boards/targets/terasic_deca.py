@@ -138,6 +138,30 @@ class BaseSoC(SoCCore):
         if with_dram:
             ddr3 = Ddr3(platform)
             ddr3_pads = platform.request("ddram")
+            ddr_clk = Signal()
+            ddr_clk_rdq = Signal()
+            ddr_clk_wdq = Signal()
+            ddr_clk_50 = Signal()
+            ddr_clk_25 = Signal()
+            ddr_cmd_clk = Signal()
+            ddr_pll_locked = Signal()
+            ddr_pll_phase_step = Signal()
+            ddr_pll_phase_updn = Signal()
+            ddr_pll_tune_phase_done = Signal()
+            dram_pll = Instance("BrianHG_DDR3_PLL",
+                i_RST_IN = 0,
+                o_DDR3_CLK = ddr_clk,
+                o_DDR3_CLK_WDQ = ddr_clk_wdq,
+                o_DDR3_CLK_RDQ = ddr_clk_rdq,
+                o_DDR3_CLK_50 = ddr_clk_50,
+                o_DDR3_CLK_25 = ddr_clk_25,
+                o_CMD_CLK = ddr_cmd_clk,
+                o_PLL_LOCKED = ddr_pll_locked,
+                i_phase_step = ddr_pll_phase_step,
+                i_phase_updn = ddr_pll_phase_updn,
+                i_phase_sclk = ddr_pll_phase_sclk,
+                o_phase_done = ddr_pll_tune_phase_done,
+                )
             self.dram = Instance(ddr3.ddr(),
                 o_DDR3_RESET_n = ddr3_pads.reset_n,
                 o_DDR3_CK_p = ddr3_pads.clk_p,
@@ -154,6 +178,30 @@ class BaseSoC(SoCCore):
                 io_DDR3_DQ = ddr3_pads.dq,
                 io_DDR3_DQS_p = ddr3_pads.dqs_p,
                 io_DDR3_DQS_n = ddr3_pads.dqs_n,
+                i_RST_IN = 0,
+                i_DDR_CLK = ddr_clk,
+                i_DDR_CLK_RDQ = ddr_clk_rdq,
+                i_DDR_CLK_WDQ = ddr_clk_wdq,
+                i_DDR_CLK_50 = ddr_clk_50,
+                i_DDR_CLK_25 = ddr_clk_25,
+                i_CLK_IN = main_clock,
+                i_CMD_CLK = ddr_cmd_clk,
+                i_SEQ_CMD_ENA_t = ddr_seq_cmd_ena_t,
+                i_SEQ_WRITE_ENA = ddr_seq_write_ena,
+                i_SEQ_ADDR = ddr_seq_addr,
+                i_SEQ_WDATA = ddr_seq_wdata,
+                i_SEQ_WMASK = ddr_seq_wmask,
+                i_SEQ_RDATA_VECT_IN = ddr_seq_rdata_vect_in,
+                i_SEQ_refresh_hold = ddr_seq_refresh_hold,
+                o_SEQ_BUSY_t = ddr_seq_busy_t,
+                o_SEQ_RDATA_RDY_t = ddr_seq_rdata_rdy_t,
+                o_SEQ_RDATA = ddr_seq_rdata,
+                o_SEQ_RDATA_VECT_OUT = ddr_seq_rdata_vect_out,
+                o_SEQ_refresh_queue = ddr_seq_refresh_queue,
+                i_phase_done = ddr_pll_tune_phase_done,
+                o_phase_step = ddr_pll_phase_step,
+                o_phase_updn = ddr_pll_phase_updn,
+                o_RDCAL_data = ddr_pll_rdcal_data,
             )
             self.specials += [self.dram]
 
